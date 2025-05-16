@@ -29,7 +29,7 @@ class Eink:
     def update_time(self, current_time_str: str):
         """Update the display with a new time string (e.g., '00:05:00')."""
         self.draw.rectangle((120, 80, 220, 105), fill=255)  # Clear the area
-        self.draw.text((120, 80), current_time_str, font=self.font, fill=0)
+        self.draw.text((120, 40), current_time_str, font=self.font, fill=0)
         self.epd.displayPartial(self.epd.getbuffer(self.image))
 
     def clear(self):
