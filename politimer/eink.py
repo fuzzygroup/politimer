@@ -6,20 +6,18 @@ if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
-from waveshare_epd import epd2in13b_V4
-import time
+from waveshare_epd import epd2in13_V4
 from PIL import Image,ImageDraw,ImageFont
 
 
 class Eink:
     def __init__(self):
         # Setup paths
-        base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        self.picdir = os.path.join(base_dir, 'pic')
+        self.picdir = picdir
         self.font = ImageFont.truetype(os.path.join(self.picdir, 'Font.ttc'), 24)
 
         # Initialize display
-        self.epd = epd2in13b_V4.EPD()
+        self.epd = epd2in13_V4.EPD()
         logging.info("Initializing e-ink display...")
         self.epd.init()
         self.epd.Clear()
