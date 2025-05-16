@@ -2,12 +2,14 @@
 
 import tkinter as tk
 from politimer.base import Timer
+from politimer.eink import Eink
 
 
 class TimerApp:
     def __init__(self, root, timer: Timer):
         self.timer = timer
         self.root = root
+        self.eink_display = Eink()
 
         self.label = tk.Label(root, text="", font=("Helvetica", 72), fg="white", bg="black")
         self.label.pack(expand=True, fill=tk.BOTH)
@@ -16,6 +18,7 @@ class TimerApp:
         self.flash = False
         self.flash_state = True  # Whether text is visible
         self.remaining_seconds = self.timer.get_time()
+
 
         # Key bindings
         root.bind("<Left>", self.prev)
@@ -41,6 +44,7 @@ class TimerApp:
             self.label.config(fg="white")
 
         self.label.config(text=f"{speaker}\n{time_display}")
+        self.eink_display.update_time(f"{speaker}\n{time_display}")
 
     def tick(self):
         if not self.paused and self.remaining_seconds > 0:
