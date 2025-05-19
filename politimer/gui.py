@@ -22,13 +22,13 @@ class TimerApp:
         self.image_label = tk.Label(self.top_frame, image=self.image, bg="white")
         self.image_label.pack(side="left", padx=10, pady=10)
 
-        # Create a separate frame for the timer display
-        self.timer_frame = tk.Frame(root, bg="white")
-        self.timer_frame.pack(expand=True, fill=tk.BOTH)
+        # Create a frame that will contain the timer and ensure it's centered
+        self.center_frame = tk.Frame(root, bg="white")
+        self.center_frame.pack(expand=True, fill=tk.BOTH)
 
-        # Add the timer label to the timer frame
-        self.label = tk.Label(self.timer_frame, text="", font=("Helvetica", 256), fg="black", bg="white")
-        self.label.pack(expand=True, fill=tk.BOTH)
+        # Create the timer label within the center frame
+        self.label = tk.Label(self.center_frame, text="", font=("Helvetica", 256), fg="black", bg="white")
+        self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)  # Center the label in the frame
 
         # Initialize timer states
         self.paused = True
@@ -60,7 +60,7 @@ class TimerApp:
             self.label.config(fg=color)
             self.flash_state = not self.flash_state
         else:
-            self.label.config(fg="black")  # Changed from "white" to "black" for visibility
+            self.label.config(fg="black")
 
         self.label.config(text=f"{speaker}\n{time_display}")
         # self.eink_display.update_time(f"{speaker}\n{time_display}")
@@ -90,7 +90,6 @@ class TimerApp:
 
     def toggle_pause(self, event=None):
         self.paused = not self.paused
-
 
 def run_gui(schedule_path):
     timer = Timer(schedule_path)
