@@ -14,7 +14,7 @@ class Eink:
     def __init__(self):
         # Setup paths
         self.picdir = picdir
-        self.font = ImageFont.truetype(os.path.join(self.picdir, 'Font.ttc'), 24)
+        self.font = ImageFont.truetype(os.path.join(self.picdir, 'Font.ttc'), 48)
 
         # Initialize display
         self.epd = epd2in13_V4.EPD()
@@ -59,8 +59,8 @@ class Eink:
         self.draw = ImageDraw.Draw(self.image)
 
         # Draw the speaker name and time
-        self.draw.text((10, 10), speaker, font=self.font, fill=0)
-        self.draw.text((10, 40), time_str, font=self.font, fill=0)
+        self.draw.text((20, 10), speaker, font=self.font, fill=0)
+        self.draw.text((20, 80), time_str, font=self.font, fill=0)
 
         # Choose update method based on state
         if self.full_refresh_needed:
