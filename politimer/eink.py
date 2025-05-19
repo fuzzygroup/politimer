@@ -26,15 +26,56 @@ class Eink:
         self.image = Image.new('1', (self.epd.height, self.epd.width), 255)
         self.draw = ImageDraw.Draw(self.image)
 
-    def update_time(self, current_time_str: str):
-        """Update the display with a new time string (e.g., '00:05:00')."""
-        self.draw.rectangle((120, 80, 220, 105), fill=255)  # Clear the area
-        self.draw.text((120, 40), current_time_str, font=self.font, fill=0)
-        self.epd.displayPartial(self.epd.getbuffer(self.image))
+        # State tracking
+        self.current_speaker = ""
+        self.full_refresh_needed = True
+        self.refresh_counter = 0
+        self.force_refresh_every = 10  # Force full refresh every 10 updates
+
+    def update_time(self, display_text: str):
+        """
+        Update the display with the speaker name and time.
+        Will use full refresh when speaker changes or periodically.
+        """
+        # Parse the text (expected format: "SpeakerName\n00:00")
+        parts = display_text.split('\n')
+        speaker = parts[0] if len(parts) > 0 else ""
+        time_str = parts[1] if len(parts) > 1 else ""
+
+        # Determine if we need a full refresh
+        speaker_changed = (speaker != self.current_speaker)
+        if speaker_changed:
+            self.full_refresh_needed = True
+            self.current_speaker = speaker
+
+        # Increment counter and check if we need periodic full refresh
+        self.refresh_counter += 1
+        if self.refresh_counter >= self.force_refresh_every:
+            self.full_refresh_needed = True
+            self.refresh_counter = 0
+
+        # Clear the image and redraw everything
+        self.image = Image.new('1', (self.epd.height, self.epd.width), 255)
+        self.draw = ImageDraw.Draw(self.image)
+
+        # Draw the speaker name and time
+        self.draw.text((10, 10), speaker, font=self.font, fill=0)
+        self.draw.text((10, 40), time_str, font=self.font, fill=0)
+
+        # Choose update method based on state
+        if self.full_refresh_needed:
+            logging.info("Full display refresh")
+            self.epd.display(self.epd.getbuffer(self.image))
+            self.full_refresh_needed = False
+        else:
+            logging.info("Partial display update")
+            self.epd.displayPartial(self.epd.getbuffer(self.image))
 
     def clear(self):
         """Clear the e-ink display."""
         self.epd.Clear()
+        self.full_refresh_needed = False
+        self.refresh_counter = 0
 
     def sleep(self):
         """Put the display to sleep to save power."""

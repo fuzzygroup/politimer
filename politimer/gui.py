@@ -5,7 +5,6 @@ from tkinter import PhotoImage
 from politimer.base import Timer
 from politimer.eink import Eink
 
-
 class TimerApp:
     def __init__(self, root, timer: Timer):
         self.timer = timer
@@ -41,14 +40,14 @@ class TimerApp:
         self.flash_state = True  # Whether text is visible
         self.remaining_seconds = self.timer.get_time()
 
+        # Initialize E-ink display
+        self.eink_display = Eink()
+
         # Key bindings
         root.bind("a", self.prev)
         root.bind("c", self.next)
         root.bind("b", self.toggle_pause)
-        root.bind("q", lambda e: root.quit())
-
-        # Initialize E-ink display (commented out)
-        # self.eink_display = Eink()
+        root.bind("q", self.quit_app)
 
         # Start the timer display
         self.update_display()
@@ -67,8 +66,11 @@ class TimerApp:
         else:
             self.label.config(fg="black")
 
+        # Update the main display
         self.label.config(text=f"{speaker}\n{time_display}")
-        # self.eink_display.update_time(f"{speaker}\n{time_display}")
+
+        # Update the e-ink display
+        self.eink_display.update_time(f"{speaker}\n{time_display}")
 
     def tick(self):
         if not self.paused and self.remaining_seconds > 0:
@@ -96,6 +98,11 @@ class TimerApp:
     def toggle_pause(self, event=None):
         self.paused = not self.paused
 
+    def quit_app(self, event=None):
+        # Properly clean up the e-ink display before quitting
+        self.eink_display.clear()
+        self.eink_display.sleep()
+        self.root.quit()
 
 def run_gui(schedule_path):
     timer = Timer(schedule_path)
