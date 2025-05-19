@@ -10,20 +10,31 @@ class TimerApp:
         self.timer = timer
         self.root = root
 
+        # Configure the root window
+        root.configure(bg="white")
+
+        # Create top frame for logo
         self.top_frame = tk.Frame(root, bg="white")
         self.top_frame.pack(side="top", fill="x")
-        #self.eink_display = Eink()
+
+        # Add the logo image
         self.image = PhotoImage(file="/home/timeruser/politimer/data/logo.png")
         self.image_label = tk.Label(self.top_frame, image=self.image, bg="white")
         self.image_label.pack(side="left", padx=10, pady=10)
 
-        self.label = tk.Label(root, text="", font=("Helvetica", 256), fg="black", bg="white")
+        # Create a separate frame for the timer display
+        self.timer_frame = tk.Frame(root, bg="white")
+        self.timer_frame.pack(expand=True, fill=tk.BOTH)
+
+        # Add the timer label to the timer frame
+        self.label = tk.Label(self.timer_frame, text="", font=("Helvetica", 256), fg="black", bg="white")
         self.label.pack(expand=True, fill=tk.BOTH)
+
+        # Initialize timer states
         self.paused = True
         self.flash = False
         self.flash_state = True  # Whether text is visible
         self.remaining_seconds = self.timer.get_time()
-
 
         # Key bindings
         root.bind("a", self.prev)
@@ -31,7 +42,10 @@ class TimerApp:
         root.bind("b", self.toggle_pause)
         root.bind("q", lambda e: root.quit())
 
-        root.configure(bg="black")
+        # Initialize E-ink display (commented out)
+        # self.eink_display = Eink()
+
+        # Start the timer display
         self.update_display()
         self.tick()
 
@@ -46,10 +60,10 @@ class TimerApp:
             self.label.config(fg=color)
             self.flash_state = not self.flash_state
         else:
-            self.label.config(fg="white")
+            self.label.config(fg="black")  # Changed from "white" to "black" for visibility
 
         self.label.config(text=f"{speaker}\n{time_display}")
-        #self.eink_display.update_time(f"{speaker}\n{time_display}")
+        # self.eink_display.update_time(f"{speaker}\n{time_display}")
 
     def tick(self):
         if not self.paused and self.remaining_seconds > 0:
