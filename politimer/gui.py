@@ -5,6 +5,7 @@ from tkinter import PhotoImage
 from politimer.base import Timer
 from politimer.eink import Eink
 
+
 class TimerApp:
     def __init__(self, root, timer: Timer):
         self.timer = timer
@@ -13,22 +14,26 @@ class TimerApp:
         # Configure the root window
         root.configure(bg="white")
 
-        # Create top frame for logo
-        self.top_frame = tk.Frame(root, bg="white")
-        self.top_frame.pack(side="top", fill="x")
+        # Create main container frame
+        self.main_frame = tk.Frame(root, bg="white")
+        self.main_frame.pack(expand=True, fill=tk.BOTH)
+
+        # Create left frame for logo
+        self.logo_frame = tk.Frame(self.main_frame, bg="white")
+        self.logo_frame.pack(side="left", padx=20, pady=20)
 
         # Add the logo image
         self.image = PhotoImage(file="/home/timeruser/politimer/data/logo.png")
-        self.image_label = tk.Label(self.top_frame, image=self.image, bg="white")
-        self.image_label.pack(side="left", padx=10, pady=10)
+        self.image_label = tk.Label(self.logo_frame, image=self.image, bg="white")
+        self.image_label.pack(padx=10, pady=10)
 
-        # Create a frame that will contain the timer and ensure it's centered
-        self.center_frame = tk.Frame(root, bg="white")
-        self.center_frame.pack(expand=True, fill=tk.BOTH)
+        # Create right frame for timer
+        self.timer_frame = tk.Frame(self.main_frame, bg="white")
+        self.timer_frame.pack(side="left", expand=True, fill=tk.BOTH)
 
-        # Create the timer label within the center frame
-        self.label = tk.Label(self.center_frame, text="", font=("Helvetica", 256), fg="black", bg="white")
-        self.label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)  # Center the label in the frame
+        # Create the timer label within the timer frame
+        self.label = tk.Label(self.timer_frame, text="", font=("Helvetica", 256), fg="black", bg="white")
+        self.label.pack(expand=True, fill=tk.BOTH)
 
         # Initialize timer states
         self.paused = True
@@ -90,6 +95,7 @@ class TimerApp:
 
     def toggle_pause(self, event=None):
         self.paused = not self.paused
+
 
 def run_gui(schedule_path):
     timer = Timer(schedule_path)
