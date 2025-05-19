@@ -1,6 +1,7 @@
 # politimer/gui.py
 
 import tkinter as tk
+from tkinter import PhotoImage
 from politimer.base import Timer
 from politimer.eink import Eink
 
@@ -10,8 +11,10 @@ class TimerApp:
         self.timer = timer
         self.root = root
         self.eink_display = Eink()
-
-        self.label = tk.Label(root, text="", font=("Helvetica", 72), fg="white", bg="black")
+        self.image = PhotoImage(file="data/logo.png")
+        self.image_label = tk.Label(root, image=self.image, bg="white")
+        self.image_label.place(relx=1.0, rely=0.0, anchor="ne", x=10, y=10)
+        self.label = tk.Label(root, text="", font=("Helvetica", 256), fg="black", bg="white")
         self.label.pack(expand=True, fill=tk.BOTH)
 
         self.paused = True
@@ -21,9 +24,9 @@ class TimerApp:
 
 
         # Key bindings
-        root.bind("<Left>", self.prev)
-        root.bind("<Right>", self.next)
-        root.bind("<space>", self.toggle_pause)
+        root.bind("a", self.prev)
+        root.bind("c", self.next)
+        root.bind("b", self.toggle_pause)
         root.bind("q", lambda e: root.quit())
 
         root.configure(bg="black")
