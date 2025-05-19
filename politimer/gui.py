@@ -5,18 +5,20 @@ from tkinter import PhotoImage
 from politimer.base import Timer
 from politimer.eink import Eink
 
-
 class TimerApp:
     def __init__(self, root, timer: Timer):
         self.timer = timer
         self.root = root
-        self.eink_display = Eink()
-        self.image = PhotoImage(file="data/logo.png")
-        self.image_label = tk.Label(root, image=self.image, bg="white")
-        self.image_label.place(relx=1.0, rely=0.0, anchor="ne", x=10, y=10)
+
+        self.top_frame = tk.Frame(root, bg="white")
+        self.top_frame.pack(side="top", fill="x")
+        #self.eink_display = Eink()
+        self.image = PhotoImage(file="/home/timeruser/politimer/data/logo.png")
+        self.image_label = tk.Label(self.top_frame, image=self.image, bg="white")
+        self.image_label.pack(side="left", padx=10, pady=10)
+
         self.label = tk.Label(root, text="", font=("Helvetica", 256), fg="black", bg="white")
         self.label.pack(expand=True, fill=tk.BOTH)
-
         self.paused = True
         self.flash = False
         self.flash_state = True  # Whether text is visible
@@ -47,7 +49,7 @@ class TimerApp:
             self.label.config(fg="white")
 
         self.label.config(text=f"{speaker}\n{time_display}")
-        self.eink_display.update_time(f"{speaker}\n{time_display}")
+        #self.eink_display.update_time(f"{speaker}\n{time_display}")
 
     def tick(self):
         if not self.paused and self.remaining_seconds > 0:
@@ -74,6 +76,7 @@ class TimerApp:
 
     def toggle_pause(self, event=None):
         self.paused = not self.paused
+
 
 def run_gui(schedule_path):
     timer = Timer(schedule_path)
