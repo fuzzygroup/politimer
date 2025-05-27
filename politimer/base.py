@@ -1,42 +1,23 @@
 """
 politimer base module.
 """
-import json
-from datetime import timedelta
 
-class Timer:
-    def __init__(self, schedule_path: str):
-        self.schedule = self.load_schedule(schedule_path)
-        self.index = 0  # current speaker index
+"""
+App bootstrap module — instantiates model, controller, and views.
+"""
 
-    def load_schedule(self, path: str):
-        with open(path, 'r') as f:
-            return json.load(f)
+import tkinter as tk
+from politimer.model_timer import TimerModel  # Your actual model class from earlier sessions
+from politimer.controller import TimerController
+from politimer.view_gui import GuiView
 
-    def get_time(self):
-        """Returns time in seconds from HH:MM:SS string."""
-        time_str = self.schedule[self.index].get("time", "00:00:00")
-        try:
-            hours, minutes, seconds = map(int, time_str.split(":"))
-            td = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-            return int(td.total_seconds())
-        except ValueError:
-            return 0  # fallback on bad format
+def run(schedule_path: str):
+    timer = TimerModel(schedule_path)
+    root = tk.Tk()
+    root.attributes("-fullscreen", True)
 
-    def get_speaker(self):
-        return self.schedule[self.index].get("speaker")
+    controller = TimerController(timer, root)
+    view = GuiView(root)
+    controller.add_display(view)
 
-    def display_time(self):
-        # placeholder — will later connect to GUI
-        print(f"{self.get_speaker()}: {self.get_time()}")
-
-    def next_setting(self):
-        if self.index < len(self.schedule) - 1:
-            self.index += 1
-
-    def prev_setting(self):
-        if self.index > 0:
-            self.index -= 1
-
-    def set_time(self, new_time):
-        self.schedule[self.index]["time"] = new_time
+    root.mainloop()
