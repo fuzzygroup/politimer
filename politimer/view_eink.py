@@ -71,7 +71,7 @@ class EinkView:
         self.draw = ImageDraw.Draw(self.image)
 
         self.draw.text((20, 10), speaker, font=self.font, fill=0)
-        self.draw.text((20, 80), time_str, font=self.font, fill=0)
+        self.draw.text((20, 70), time_str, font=self.font, fill=0)
 
         if self.full_refresh_needed:
             logging.info("Full display refresh")
