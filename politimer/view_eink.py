@@ -28,8 +28,6 @@ class EinkView:
 
         self.current_speaker = ""
         self.full_refresh_needed = True
-        self.refresh_counter = 0
-        self.force_refresh_every = 10
 
         self.controller = None
         self.update_queue = queue.Queue()
@@ -61,11 +59,6 @@ class EinkView:
         if speaker_changed:
             self.full_refresh_needed = True
             self.current_speaker = speaker
-
-        self.refresh_counter += 1
-        if self.refresh_counter >= self.force_refresh_every:
-            self.full_refresh_needed = True
-            self.refresh_counter = 0
 
         self.image = Image.new('1', (self.epd.height, self.epd.width), 255)
         self.draw = ImageDraw.Draw(self.image)

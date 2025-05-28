@@ -30,7 +30,7 @@ class GuiView:
         # Timer label
         self.timer_frame = tk.Frame(self.main_frame, bg="white")
         self.timer_frame.pack(side="left", expand=True, fill=tk.BOTH)
-        self.label = tk.Label(self.timer_frame, text="", font=("Helvetica", 128), fg="black", bg="white")
+        self.label = tk.Label(self.timer_frame, text="", font=("Helvetica", 200), fg="black", bg="white")
         self.label.pack(expand=True, fill=tk.BOTH)
 
         self.tick()  # Start the ticking visual loop
