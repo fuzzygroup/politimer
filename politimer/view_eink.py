@@ -9,6 +9,7 @@ if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
+import textwrap
 from waveshare_epd import epd7in5_V2
 from PIL import Image,ImageDraw,ImageFont
 
@@ -73,10 +74,21 @@ class EinkView:
             logging.warning(f"Logo not loaded: {e}")
 
         text_x = 500
+        base_y = 160
+        line_spacing = 60
 
-        self.draw.text((text_x, 170), speaker, font=self.font, fill=0)
-        self.draw.text((text_x, 230), time_str, font=self.font, fill=0)
+        if " " in speaker:
+            wrapped_lines = textwrap.wrap(speaker, width=12)
+        else:
+            wrapped_lines = [speaker]
 
+        for i, line in enumerate(wrapped_lines):
+            y = base_y + i * line_spacing
+            self.draw.text((text_x, y), line, font=self.font, fill=0)
+
+        time_y = base_y + len(wrapped_lines) * line_spacing + 10
+        self.draw.text((text_x, time_y), time_str, font=self.font, fill=0)
+    
         if self.full_refresh_needed:
             logging.info("Full display refresh")
             self.epd.display(self.epd.getbuffer(self.image))

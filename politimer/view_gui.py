@@ -1,3 +1,4 @@
+import textwrap
 import os
 import tkinter as tk
 from tkinter import PhotoImage
@@ -58,9 +59,18 @@ class GuiView:
             self.label.config(fg=color)
             self.flash_state = not self.flash_state
         else:
-            self.label.config(fg="black")
+            color = "black"
 
-        self.label.config(text=f"{self.speaker}\n{time_display}")
+        if " " in self.speaker:
+            wrapped_speaker = textwrap.wrap(self.speaker, width=9)
+        else:
+            wrapped_speaker = [self.speaker]
+
+        speaker_display = "\n".join(wrapped_speaker)
+        full_display = f"{speaker_display}\n{time_display}"
+
+        self.label.config(text=full_display, fg=color)
+
 
     def tick(self):
         # View doesn't manage state, but continues flashing if needed
