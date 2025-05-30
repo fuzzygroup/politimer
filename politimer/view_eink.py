@@ -9,16 +9,16 @@ if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
-from waveshare_epd import epd2in13_V4
+from waveshare_epd import epd7in5_V2
 from PIL import Image,ImageDraw,ImageFont
 
 class EinkView:
     def __init__(self):
         # Setup paths
         self.picdir = picdir
-        self.font = ImageFont.truetype(os.path.join(self.picdir, 'Font.ttc'), 48)
+        self.font = ImageFont.truetype(os.path.join(self.picdir, 'Font.ttc'), 64)
 
-        self.epd = epd2in13_V4.EPD()
+        self.epd = epd7in5_V2.EPD()
         logging.info("Initializing e-ink display...")
         self.epd.init()
         self.epd.Clear()
@@ -60,11 +60,22 @@ class EinkView:
             self.full_refresh_needed = True
             self.current_speaker = speaker
 
-        self.image = Image.new('1', (self.epd.height, self.epd.width), 255)
+        self.image = Image.new('1', (self.epd.width, self.epd.height), 255)
         self.draw = ImageDraw.Draw(self.image)
+        module_dir = os.path.dirname(__file__)
+        logo_path = os.path.join(module_dir, "../data/logo.png")
+        logo_size = 400
+        try:
+            logo = Image.open(logo_path).convert('1')
+            logo = logo.resize((logo_size, logo_size), resample=Image.Resampling.LANCZOS)
+            self.image.paste(logo, (20, int((self.epd.height - logo_size) / 2)))
+        except Exception as e:
+            logging.warning(f"Logo not loaded: {e}")
 
-        self.draw.text((20, 10), speaker, font=self.font, fill=0)
-        self.draw.text((20, 70), time_str, font=self.font, fill=0)
+        text_x = 500
+
+        self.draw.text((text_x, 170), speaker, font=self.font, fill=0)
+        self.draw.text((text_x, 230), time_str, font=self.font, fill=0)
 
         if self.full_refresh_needed:
             logging.info("Full display refresh")
@@ -72,7 +83,8 @@ class EinkView:
             self.full_refresh_needed = False
         else:
             logging.info("Partial display update")
-            self.epd.displayPartial(self.epd.getbuffer(self.image))
+            self.epd.init_part()
+            self.epd.display_Partial(self.epd.getbuffer(self.image), 0, 0, self.epd.width, self.epd.height)
 
     def clear(self):
         self.epd.Clear()
